@@ -1,7 +1,7 @@
 const { User } = require("../models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { JWT_SECRET } = require("../config");
+const { JWT_SECRET, NODE_ENV } = require("../config");
 
 exports.register = async (req, res) => {
   try {
@@ -28,9 +28,30 @@ exports.login = async (req, res) => {
     const token = jwt.sign({ id: user.id }, JWT_SECRET, {
       expiresIn: "7d",
     });
-    res.json({ token });
+
+    res.cookie("token", token, {
+      // httpOnly: true,
+      secure: NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
+    });
+
+    res.status(200).json({
+      message: "Login successful",
+      user: { id: user.id, email: user.email, name: user.name },
+    });
   } catch (err) {
     console.log("🚀 ~ exports.login= ~ err:", err);
     res.status(500).json({ error: "Login error" });
+  }
+};
+
+exports.me = async (req, res) => {
+  try {
+    const { id, email, name } = req.user;
+    res.status(200).json({ id, email, name });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal error" });
   }
 };
