@@ -7,7 +7,6 @@ const express = require("express");
 const { pinoHttpLogger } = require("./utils/logger");
 
 const authRoutes = require("./routes/authRoutes");
-const userRoutes = require("./routes/userRoutes");
 const facebookRoutes = require("./routes/facebookRoutes");
 const { PORT } = require("./config");
 
@@ -27,7 +26,6 @@ app.use(express.json());
 app.use(bodyParser.json());
 
 app.use("/api/auth", authRoutes);
-app.use("/api/user", userRoutes);
 app.use("/api/facebook", facebookRoutes);
 
 app.listen(PORT, () => {
