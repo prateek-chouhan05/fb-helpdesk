@@ -1,30 +1,37 @@
 "use strict";
+
+const { DataTypes } = require("sequelize");
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Users", {
+    await queryInterface.createTable("Pages", {
       id: {
         allowNull: false,
+        autoIncrement: true,
         primaryKey: true,
-        defaultValue: Sequelize.UUIDV4,
-        type: Sequelize.UUID,
+        type: Sequelize.INTEGER,
       },
-      name: {
+      title: {
         type: Sequelize.STRING,
+      },
+      userId: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        references: {
+          model: "Users",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
+      pageId: {
+        type: DataTypes.STRING,
         allowNull: false,
       },
-      email: {
-        type: Sequelize.STRING,
+      accessToken: {
+        type: DataTypes.STRING,
         allowNull: false,
-        unique: true,
-      },
-      password: {
-        type: Sequelize.TEXT,
-        allowNull: false,
-      },
-      fbToken: {
-        type: Sequelize.TEXT,
-        allowNull: true,
       },
       createdAt: {
         allowNull: false,
@@ -36,7 +43,8 @@ module.exports = {
       },
     });
   },
+
   async down(queryInterface) {
-    await queryInterface.dropTable("Users");
+    await queryInterface.dropTable("Pages");
   },
 };
